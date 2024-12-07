@@ -1,0 +1,14 @@
+[package]
+name = "esp32c3-event-notifier"
+version = "0.1.0"
+edition = "2021"
+
+[build-dependencies]
+embuild = "0.32.0"
+
+[patch.crates-io]
+esp-idf-sys = { git = "https://github.com/esp-rs/esp-idf-sys", rev = "93c031d9" }
+
+[dependencies]
+esp-idf-hal = "0.44.1"
+esp-idf-svc = "0.49.1"
