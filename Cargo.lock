@@ -597,7 +597,6 @@ name = "esp32c3-event-notifier"
 version = "0.1.0"
 dependencies = [
  "embuild",
- "esp-idf-hal",
  "esp-idf-svc",
 ]
 
