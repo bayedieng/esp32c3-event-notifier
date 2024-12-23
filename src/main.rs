@@ -6,7 +6,7 @@ use esp_idf_svc::hal::sys::EspError;
 use esp_idf_svc::nvs::EspDefaultNvsPartition;
 use esp_idf_svc::wifi::{BlockingWifi, Configuration, EspWifi};
 
-const SSID: &str = env!("WIFI_SSID");
+const SSID: &str = env!("SSID");
 const PASSWORD: &str = env!("WIFI_PASS");
 
 fn connect_to_wifi(wifi: &mut BlockingWifi<EspWifi<'static>>) -> Result<(), EspError> {
