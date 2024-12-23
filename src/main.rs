@@ -2,7 +2,7 @@
 #![no_main]
 
 use esp_backtrace as _;
-use esp_hal::{prelude::*, rng::Rng, time, timer::timg::TimerGroup};
+use esp_hal::{delay::Delay, prelude::*, rng::Rng, time, timer::timg::TimerGroup};
 use esp_println::println;
 use esp_wifi::wifi::{ClientConfiguration, Configuration, WifiStaDevice};
 
@@ -38,16 +38,26 @@ fn main() -> ! {
         password: WIFI_PASS.try_into().unwrap(),
         ..Default::default()
     });
-
-    wifi_controller.set_configuration(&wifi_config).unwrap();
+    let res = wifi_controller.set_configuration(&wifi_config);
+    println!("Wifi Configuration Result: {:?}", res);
     wifi_controller.start().unwrap();
-    wifi_controller.connect().unwrap();
-    println!("Waiting for connection");
-
-    if wifi_controller.is_connected().unwrap() {
-        println!("Connected to Wifi")
-    } else {
-        println!("Could not connect to Wifi");
+    println!("Has wifi started {:?}", wifi_controller.is_started());
+    println!("Wif connect {:?}", wifi_controller.connect());
+    loop {
+        match wifi_controller.is_connected() {
+            Ok(true) => {
+                println!("Connected Sucessfuly to Wifi");
+                break;
+            }
+            Ok(false) => println!(
+                "Attempting Connection to {:?}",
+                wifi_controller.configuration().unwrap()
+            ),
+            Err(err) => {
+                println!("Connection Error: {err:?}");
+                loop {}
+            }
+        }
     }
 
     loop {}
