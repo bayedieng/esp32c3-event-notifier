@@ -336,6 +336,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "esp-backtrace"
+version = "0.14.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb7660d85e3e7b0e113aaeeffb1a155e64a09a5035d4104031875acdba4cb68e"
+dependencies = [
+ "esp-build",
+ "esp-println",
+]
+
+[[package]]
 name = "esp-build"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -505,6 +515,8 @@ dependencies = [
 name = "esp32c3-event-notifier"
 version = "0.1.0"
 dependencies = [
+ "esp-alloc",
+ "esp-backtrace",
  "esp-hal",
  "esp-println",
  "esp-wifi",

@@ -1,30 +1,22 @@
 #![no_std]
 #![no_main]
 
-use core::panic::PanicInfo;
+use esp_backtrace as _;
 use esp_hal::{prelude::*, rng::Rng, time, timer::timg::TimerGroup};
 use esp_println::println;
 use esp_wifi::wifi::{ClientConfiguration, Configuration, WifiStaDevice};
+
 use smoltcp::socket::tcp::{Socket, SocketBuffer};
 
 const SSID: &str = env!("SSID");
 const WIFI_PASS: &str = env!("WIFI_PASS");
 const SOCKET_BUF_SIZE: usize = 1024;
 
-#[panic_handler]
-fn panic(info: &PanicInfo) -> ! {
-    esp_println::println!(
-        "Panicked at: {:?}\n Line: {:?}",
-        info.message(),
-        info.location().unwrap().line()
-    );
-    loop {}
-}
-
 #[entry]
 fn main() -> ! {
     let config = esp_hal::Config::default();
     let peripherals = esp_hal::init(config);
+    esp_alloc::heap_allocator!(72 * 1024);
     let timg0 = TimerGroup::new(peripherals.TIMG0);
     let mut wifi_device = peripherals.WIFI;
     let mut rng = Rng::new(peripherals.RNG);
@@ -57,11 +49,6 @@ fn main() -> ! {
     } else {
         println!("Could not connect to Wifi");
     }
-    let mut rx_buffer = [0; SOCKET_BUF_SIZE];
-    let mut tx_buffer = [0; SOCKET_BUF_SIZE];
-    let tcp_rx_buffer = SocketBuffer::new(&mut rx_buffer[..]);
-    let tcp_tx_buffer = SocketBuffer::new(&mut tx_buffer[..]);
-    let tcp_socket = Socket::new(tcp_rx_buffer, tcp_tx_buffer);
 
     loop {}
 }
