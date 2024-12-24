@@ -512,7 +512,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "esp32c3-event-notifier"
+name = "event-notifier"
 version = "0.1.0"
 dependencies = [
  "esp-alloc",
@@ -950,6 +950,10 @@ dependencies = [
  "quote",
  "unicode-ident",
 ]
+
+[[package]]
+name = "tcp-server"
+version = "0.1.0"
 
 [[package]]
 name = "termcolor"
