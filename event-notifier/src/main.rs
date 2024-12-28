@@ -2,10 +2,10 @@
 #![no_main]
 
 use esp_backtrace as _;
+use esp_hal::timer::PeriodicTimer;
 use esp_hal::{delay::Delay, prelude::*, rng::Rng, time, timer::timg::TimerGroup};
 use esp_println::println;
 use esp_wifi::wifi::{ClientConfiguration, Configuration, WifiStaDevice};
-
 use smoltcp::iface::{SocketSet, SocketStorage};
 use smoltcp::socket::tcp::{Socket, SocketBuffer};
 use smoltcp::time::Instant;
@@ -28,6 +28,7 @@ fn main() -> ! {
     let peripherals = esp_hal::init(config);
     esp_alloc::heap_allocator!(72 * 1024);
     let timg0 = TimerGroup::new(peripherals.TIMG0);
+    let mut periodic_timer = PeriodicTimer::new(timg0.timer0);
     let mut wifi_device = peripherals.WIFI;
     let mut rng = Rng::new(peripherals.RNG);
 
@@ -93,10 +94,9 @@ fn main() -> ! {
         .add_default_ipv4_route(Ipv4Address::new(192, 168, 101, 199))
         .unwrap();
 
-    let mut state = ConnectionState::Connect;
-    let msg = b"Hello, From Esp.";
-
+    periodic_timer.start(10.secs());
     loop {
+        nb::block!(periodic_timer.wait());
         iface.poll(
             Instant::from_millis(time::now().duration_since_epoch().to_millis() as i64),
             &mut wifi_device,
