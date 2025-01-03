@@ -15,12 +15,6 @@ const SSID: &str = env!("SSID");
 const WIFI_PASS: &str = env!("WIFI_PASS");
 const SOCKET_BUF_SIZE: usize = 1024;
 
-enum ConnectionState {
-    Connect,
-    Request,
-    Response,
-}
-
 #[entry]
 fn main() -> ! {
     // Initialize Peripherals
