@@ -2,6 +2,8 @@
 #![no_main]
 
 use esp_backtrace as _;
+use esp_hal::i2c::master::{Config, I2c};
+use esp_hal::peripheral;
 use esp_hal::timer::PeriodicTimer;
 use esp_hal::{delay::Delay, prelude::*, rng::Rng, time, timer::timg::TimerGroup};
 use esp_println::println;
@@ -22,10 +24,11 @@ fn main() -> ! {
     let peripherals = esp_hal::init(config);
     esp_alloc::heap_allocator!(72 * 1024);
     let timg0 = TimerGroup::new(peripherals.TIMG0);
-    let mut periodic_timer = PeriodicTimer::new(timg0.timer0);
+    let timg1 = TimerGroup::new(peripherals.TIMG1);
+    let mut periodic_timer = PeriodicTimer::new(timg1.timer0);
     let mut wifi_device = peripherals.WIFI;
     let mut rng = Rng::new(peripherals.RNG);
-
+    let i2c = I2c::new(peripherals.I2C0, Config::default());
     let elapsed_time = || time::now().duration_since_epoch().to_millis();
 
     // Initialize Wifi Drivers
@@ -68,7 +71,7 @@ fn main() -> ! {
             }
         }
     }
-
+    let msg = b"HELLO, from ESP";
     // Create TCP Socket
     let mut rx_buffer = [0; SOCKET_BUF_SIZE];
     let mut tx_buffer = [0; SOCKET_BUF_SIZE];
